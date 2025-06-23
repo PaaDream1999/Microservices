@@ -20,21 +20,21 @@ Microservices/
 ### Architecture Diagram
 ระบบทำงานแบบ Microservices โดยมี Discovery Service และ Gateway คั่นกลาง
 
-![Architecture Diagram](./Architecture Diagram.png)
+![Architecture Diagram](./Architecture%20Diagram.png)
 
 ---
 
 ### Use Case Diagram
 แสดงกรณีการใช้งานของผู้ใช้
 
-![Use Case Diagram](./Use Case Diagram.png)
+![Use Case Diagram](./Use%20Case%20Diagram.png)
 
 ---
 
 ### Class Diagram
 แสดงโครงสร้างข้อมูลของระบบ Authentication และ User
 
-![Class Diagram](./Class Diagram.png)
+![Class Diagram](./Class%20Diagram.png)
 
 ---
 
