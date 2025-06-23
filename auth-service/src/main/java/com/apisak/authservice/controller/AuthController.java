@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * REST-API สำหรับสมัครสมาชิก / ล็อกอิน
- * ถูก Spring สแกนจาก @RestController จึงไม่ต้องมีการอ้างถึงโดยตรงในโค้ด
  */
-@SuppressWarnings("unused")          // ปิด warning “is never used” ใน IDE
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor

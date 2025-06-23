@@ -15,7 +15,7 @@ spring:
       ddl-auto: update
 
 service:
-  auth: http://auth-service
+  auth: http://auth-service:8081
 
 jwt:
   secret: 5bf8505e7f1171cbf12fd4904860cf2ad99b3f3bc98fc2de63f9469dc1fa7aac

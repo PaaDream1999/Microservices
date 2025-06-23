@@ -1,6 +1,7 @@
 package com.apisak.userservice.security;
 
 import lombok.RequiredArgsConstructor;
+import com.apisak.userservice.security.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;

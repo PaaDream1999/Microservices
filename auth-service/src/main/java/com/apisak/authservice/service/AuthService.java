@@ -26,32 +26,37 @@ public class AuthService {
 
     @Transactional
     public void register(@NonNull RegisterDto dto) {
-
-        if (repo.findByUsername(dto.username()).isPresent())
+        if (repo.findByUsername(dto.username()).isPresent()) {
             throw new IllegalStateException("Username already exists");
+        }
 
-        User u = new User();
-        u.setUsername(dto.username());
-        u.setPasswordHash(encoder.encode(dto.password()));
-        u.setEmail(dto.email());
-        u.setRoles(List.of("USER"));
-        repo.save(u);
+        User user = new User();
+        user.setUsername(dto.username());
+        user.setPasswordHash(encoder.encode(dto.password()));
+        user.setEmail(dto.email());
+        user.setRoles(List.of("USER"));
+        repo.save(user);
 
         web.build()
                 .post()
                 .uri("lb://user-service/internal/profiles")
-                .bodyValue(Map.of("userId", u.getId(),
-                        "displayName", "User " + u.getId()))
+                .bodyValue(Map.of(
+                        "userId", user.getId(),
+                        "displayName", "User " + user.getId()
+                ))
                 .retrieve()
                 .toBodilessEntity()
                 .block();
     }
 
     public @NonNull String login(@NonNull LoginDto dto) {
-        User u = repo.findByUsername(dto.username())
+        User user = repo.findByUsername(dto.username())
                 .orElseThrow(() -> new IllegalArgumentException("Bad credentials"));
-        if (!encoder.matches(dto.password(), u.getPasswordHash()))
+
+        if (!encoder.matches(dto.password(), user.getPasswordHash())) {
             throw new IllegalArgumentException("Bad credentials");
-        return jwt.generateToken(u);
+        }
+
+        return jwt.generateToken(user.getId().toString(), user.getRoles());
     }
 }
