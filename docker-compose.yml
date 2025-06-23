@@ -1,0 +1,118 @@
+services:
+  # DATABASES
+  postgres-auth:
+    image: postgres:16
+    container_name: postgres-auth
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: authdb
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: "pg_isready -U auth -d authdb"
+      interval: 5s
+      retries: 10
+    volumes:
+      - pg-auth:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  postgres-user:
+    image: postgres:16
+    container_name: postgres-user
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: userdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: "pg_isready -U user -d userdb"
+      interval: 5s
+      retries: 10
+    volumes:
+      - pg-user:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  # SPRING SERVICES
+  discovery-service:
+    build:
+      context: ./discovery-service
+    container_name: discovery-service
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: "curl -f http://localhost:8761/actuator/health || exit 1"
+      interval: 10s
+      timeout: 3s
+      retries: 12
+    networks:
+      - backend
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_HOST=discovery-service
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+    networks:
+      - backend
+
+  auth-service:
+    build:
+      context: ./auth-service
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_HOST=postgres-auth
+      - DB_PORT=5432
+      - DB_NAME=authdb
+      - DB_USER=auth
+      - DB_PASSWORD=secret
+      - EUREKA_HOST=discovery-service
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+    networks:
+      - backend
+
+  user-service:
+    build:
+      context: ./user-service
+    container_name: user-service
+    ports:
+      - "8082:8082"
+    environment:
+      - DB_HOST=postgres-user
+      - DB_PORT=5432
+      - DB_NAME=userdb
+      - DB_USER=user
+      - DB_PASSWORD=secret
+      - EUREKA_HOST=discovery-service
+    depends_on:
+      postgres-user:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+    networks:
+      - backend
+
+# VOLUMES / NETWORK
+volumes:
+  pg-auth:
+  pg-user:
+
+networks:
+  backend:

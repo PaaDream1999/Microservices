@@ -1,0 +1,29 @@
+@startuml
+package "auth-service" {
+  class User {
+    +UUID id
+    +String username
+    +String passwordHash
+    +String email
+    +boolean enabled
+    +Set<Role> roles
+  }
+  class Role {
+    +UUID id
+    +String name
+  }
+  User "1" -- "*" Role
+}
+
+package "user-service" {
+  class Profile {
+    +UUID id
+    +UUID userId
+    +String firstName
+    +String lastName
+    +LocalDate dob
+    +String avatarUrl
+  }
+  User <.. Profile : ownedBy
+}
+@enduml

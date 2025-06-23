@@ -1,0 +1,21 @@
+@startuml
+actor "Member" as M
+actor "Admin" as A
+
+rectangle "Membership System" {
+  usecase "Register" as UC1
+  usecase "Login" as UC2
+  usecase "Verify E-mail" as UC3
+  usecase "Update Profile" as UC4
+  usecase "Reset Password" as UC5
+  usecase "Approve Member" as UC6
+}
+
+M -- UC1
+M -- UC2
+M -- UC3
+M -- UC4
+M -- UC5
+A -- UC6
+UC6 ..> UC1 : <<extends>>
+@enduml
